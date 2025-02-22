@@ -1,0 +1,57 @@
+package expanded.enchantments.mixin;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import expanded.enchantments.Registers;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.player.PlayerAbilities;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+@Mixin(PlayerEntity.class)
+public abstract class PlayerEntityMixin extends LivingEntity{
+    @Shadow
+    public abstract ItemStack getEquippedStack(EquipmentSlot slot);
+
+    @Shadow
+    public abstract PlayerAbilities getAbilities();
+
+    protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
+        super(entityType, world);
+    }
+    private static double prevHp;
+    @Inject(method = "tick", at = @At("HEAD"))
+    private void tick(CallbackInfo ci) {
+        ItemStack feet = this.getEquippedStack(EquipmentSlot.FEET);
+        ItemStack head = this.getEquippedStack(EquipmentSlot.HEAD);
+        ItemStack chest = this.getEquippedStack(EquipmentSlot.CHEST);
+        ItemStack legs = this.getEquippedStack(EquipmentSlot.LEGS);
+
+        int healthBoostChest = EnchantmentHelper.getLevel(Registers.HEALTH_BOOST, chest);
+        int healthBoostHead = EnchantmentHelper.getLevel(Registers.HEALTH_BOOST, head);
+        int healthBoostLegs = EnchantmentHelper.getLevel(Registers.HEALTH_BOOST, legs);
+        int healthBoostFeet = EnchantmentHelper.getLevel(Registers.HEALTH_BOOST, feet);
+        if(healthBoostChest>0||healthBoostFeet>0||healthBoostHead>0||healthBoostLegs>0){
+           this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(prevHp+healthBoostChest+healthBoostFeet+healthBoostHead+healthBoostLegs);
+        }
+        else{
+            prevHp = this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).getBaseValue();
+        }
+        
+        int speedEnchant = EnchantmentHelper.getLevel(Registers.SWIFT_FEET, feet);
+        if(speedEnchant!=0){
+            StatusEffectInstance speed = new StatusEffectInstance(StatusEffects.SPEED, 20, speedEnchant-1, true, false, false);
+            this.addStatusEffect(speed);
+        }
+    }
+}

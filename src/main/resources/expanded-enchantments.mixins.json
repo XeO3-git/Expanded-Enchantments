@@ -1,0 +1,15 @@
+{
+	"required": true,
+	"package": "expanded.enchantments.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"mixins": [
+		"CrossbowMixin",
+		"ItemMixin",
+		"LivingEntityMixin",
+		"PersistentProjectileEntityMixin",
+		"PlayerEntityMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

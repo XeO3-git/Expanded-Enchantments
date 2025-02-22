@@ -1,0 +1,44 @@
+{
+	"schemaVersion": 1,
+	"id": "expanded-enchantments",
+	"version": "${version}",
+	"name": "Expanded Enchantments",
+	"description": "This mod adds some new enchantments",
+	"authors": [
+		"XeO3"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/expanded-enchantments/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"expanded.enchantments.ExpandedEnchantments"
+		],
+		"client": [
+			"expanded.enchantments.ExpandedEnchantmentsClient"
+		],
+		"fabric-datagen": [
+			"expanded.enchantments.ExpandedEnchantmentsDataGenerator"
+		]
+	},
+	"mixins": [
+		"expanded-enchantments.mixins.json",
+		{
+			"config": "expanded-enchantments.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.16.10",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
