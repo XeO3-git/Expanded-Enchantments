@@ -24,7 +24,7 @@ public class CourageEnchantment extends Enchantment {
 
 	@Override
 	public boolean isTreasure() {
-		return true;
+		return false;
 	}
 
 

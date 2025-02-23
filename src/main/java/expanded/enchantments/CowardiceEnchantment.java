@@ -23,7 +23,7 @@ public class CowardiceEnchantment extends Enchantment {
 
 	@Override
 	public boolean isTreasure() {
-		return true;
+		return false;
 	}
 
 	@Override
