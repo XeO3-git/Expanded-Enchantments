@@ -28,6 +28,10 @@ public class Registers {
     public static Enchantment EXPLODING_ARROWS = new ExplodingArrowsEnchantment();
     public static Enchantment HEALTH_BOOST = new HealthBoostEnchantment();
     public static Enchantment SWIFT_FEET = new SwiftFeetEnchantment();
+
+    public static Enchantment NIGHTVISION = new NightVisionEnchantment();
+    public static Enchantment LIFESTEAL = new LifeStealEnchantment();
+
     public static void Register(){
         Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "recoil"), RECOIL);
         Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "launching"), LAUNCHING);
@@ -51,29 +55,37 @@ public class Registers {
         Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "health_boost"), HEALTH_BOOST);
         Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "swift_feet"), SWIFT_FEET);
 
+        Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "nightvision"), NIGHTVISION);
+        Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "lifesteal"), LIFESTEAL);
+
         
 
     }
 }
-/* 
-**The ones I have currently  are **
-Frost aspect
-Poison aspect 
-Wither aspect
-Chaos aspect (has a chance of withering, freezing, igniting, or poisoning an enemy)
-Reeling (for bows/crossbows, pulls a creature toward you when you hit them)
-Draw weight (for crossbows, increases draw time but increases damage)
-Recoil (for crossbows throws you backward when you shoot)
-Poison burst (all of these burst enchantments have a chance to trigger every time you hit an enemy, when they do, they apply an effect to all creatures in a 15 by 15 by 15 cube around the creature, and the creature)
-Flame burst 
-Wither burst 
-Frost burst 
-Chaos burst
-Soul sharpness (this causes an enemy to be withered and frozen when you hit it and the effects get worse the more creatures you kill with the weapon in a row, however, if you don't kill anything for awhile it gives you weakness and stops giving negative effects to creatures you hit. (can be fixed by killing more things with it))
-Launching (for bows/crossbows, shoots the hit creature a few block into the air)
-
-**These ones I have not done yet, but I am planning to add them**
-Spiked (for a shield, when bringing up your shield it would damage and knock back all creatures in front of you)
+/* TODO
+STUFF TO ADD
+Spiked (for a shield, creatures whose mlee attacks are blocked by the shield have a chance to be damaged)
 Discovery (for pickaxe, gives a small chance for stone to drop coal, copper, and iron, and a small chance for deep slate to drop redstone, lapis, and a very small chance of diamonds)
+Gleaming (gives a chance to drop xp from blocks broken)
 Nether's bane (deals more damage to nether mobs)
-End's bane (deals more damage to end mobs) */
+End's bane (deals more damage to end mobs) 
+harvesting (fortune for hoes)
+turtle (gives resistance and slowness when you bring up your shield)
+breserker (deal more damage the lower your health is, chest)
+unscathed (deal more damage when at full health, but less at lower health, chest)
+well nourished (hunger degrades slower, chest)
+intangable (legs, when taking damage has a chance to teleport you like chorus fruit and make you immune to all damage for one second)
+hardhat (take less damage when hitting blocks with an elytra, head)
+persisting (this item cannot be killed except by the void nor can it despawn)
+stepping (step up blocks like a horse, boots)
+multi-hook (adds multiple hooks from the fishing rod)
+zeus (has a small chance to summon a lightning bolt when your arrow hits an enemy)
+misanthropy (deal more damage to players, illagers, wiches, villagers, and endermen)
+collosis slayer (deal more damage to bosses)
+decapitation (axe, has a chance to insta kill your enemy with chance varying based on enemy max hp)
+phantom arrows (arrows are unaffected by gravity)
+homing (arrows home in on thier target)
+omniscience (head, gives all creatures within a certain radius of you glowing)
+quick learner (head, gain more xp)
+toolswaping (atotool, chest)
+*/
