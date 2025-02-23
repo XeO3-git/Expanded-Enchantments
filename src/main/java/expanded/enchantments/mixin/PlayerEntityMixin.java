@@ -5,18 +5,21 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import expanded.enchantments.Registers;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity{
@@ -31,7 +34,7 @@ public abstract class PlayerEntityMixin extends LivingEntity{
     }
     private static double prevHp;
     @Inject(method = "tick", at = @At("HEAD"))
-    private void tick(CallbackInfo ci) {
+    private void tick(CallbackInfo info) {
         ItemStack feet = this.getEquippedStack(EquipmentSlot.FEET);
         ItemStack head = this.getEquippedStack(EquipmentSlot.HEAD);
         ItemStack chest = this.getEquippedStack(EquipmentSlot.CHEST);
@@ -52,6 +55,21 @@ public abstract class PlayerEntityMixin extends LivingEntity{
         if(speedEnchant!=0){
             StatusEffectInstance speed = new StatusEffectInstance(StatusEffects.SPEED, 20, speedEnchant-1, true, false, false);
             this.addStatusEffect(speed);
+        }
+         int darkvisionEnchantment = EnchantmentHelper.getLevel(Registers.NIGHTVISION, head);
+        if(darkvisionEnchantment>0){
+            StatusEffectInstance nightvis = new StatusEffectInstance(StatusEffects.NIGHT_VISION, 20, 1, true, false, false);
+            this.addStatusEffect(nightvis);
+        }
+
+    }
+    @Inject(method = "onKilledOther", at = @At("HEAD"), locals = LocalCapture.CAPTURE_FAILHARD)
+    private void tick(ServerWorld world, LivingEntity other, CallbackInfo info) {
+        ItemStack chest = this.getEquippedStack(EquipmentSlot.CHEST);
+        double lifeStealLevel = EnchantmentHelper.getLevel(Registers.LIFESTEAL, chest);
+        if(lifeStealLevel >0){
+            double hp = other.getAttributeBaseValue(EntityAttributes.GENERIC_MAX_HEALTH);
+            this.heal(((float)(hp*lifeStealLevel)/10));
         }
     }
 }
