@@ -1,4 +1,4 @@
-# This mod adds 21 new enchantments to the game
+# This mod adds 23 new enchantments to the game
 
  
 
@@ -85,3 +85,11 @@ armor enchantment that increases your health
 ### Swift Feet:
 
 boots enchantment that gives you speed
+
+### Nightvision
+
+helmet enchantment that grants nightvision
+
+### Lifesteal
+
+Chestplate enchantment that causes you to regain a bit of health whenever you kill a mob
