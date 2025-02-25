@@ -14,6 +14,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerAbilities;
@@ -33,6 +34,7 @@ public abstract class PlayerEntityMixin extends LivingEntity{
         super(entityType, world);
     }
     private static double prevHp;
+    private boolean nightvis;
     @Inject(method = "tick", at = @At("HEAD"))
     private void tick(CallbackInfo info) {
         ItemStack feet = this.getEquippedStack(EquipmentSlot.FEET);
@@ -56,15 +58,18 @@ public abstract class PlayerEntityMixin extends LivingEntity{
             StatusEffectInstance speed = new StatusEffectInstance(StatusEffects.SPEED, 20, speedEnchant-1, true, false, false);
             this.addStatusEffect(speed);
         }
-         int darkvisionEnchantment = EnchantmentHelper.getLevel(Registers.NIGHTVISION, head);
-        if(darkvisionEnchantment>0 && !this.hasStatusEffect(StatusEffects.NIGHT_VISION)){
-            StatusEffectInstance nightvis = new StatusEffectInstance(StatusEffects.NIGHT_VISION, 201, 1, true, false, false);
+        int darkvisionEnchantment=EnchantmentHelper.getLevel(Registers.NIGHTVISION, head);
+        if(darkvisionEnchantment>0){
+            this.nightvis = true;
+           StatusEffectInstance nightvis = new StatusEffectInstance(StatusEffects.NIGHT_VISION, -1, 1, true, false, false);
             this.addStatusEffect(nightvis);
         }
-
+        if(this.nightvis && darkvisionEnchantment==0){
+            this.removeStatusEffect(StatusEffects.NIGHT_VISION);
+        }
     }
     @Inject(method = "onKilledOther", at = @At("HEAD"), locals = LocalCapture.CAPTURE_FAILHARD)
-    public void onKilledOther(ServerWorld world, LivingEntity other, CallbackInfoReturnable info) {
+    public void onKilledOther(ServerWorld world, LivingEntity other, CallbackInfoReturnable<Boolean> info) {
         ItemStack chest = this.getEquippedStack(EquipmentSlot.CHEST);
         double lifeStealLevel = EnchantmentHelper.getLevel(Registers.LIFESTEAL, chest);
         if(lifeStealLevel > 0){
