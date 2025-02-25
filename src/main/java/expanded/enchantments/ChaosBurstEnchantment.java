@@ -41,7 +41,6 @@ public class ChaosBurstEnchantment extends Enchantment{
                 if(hit instanceof LivingEntity){
                     LivingEntity living = (LivingEntity)hit;
                     int rand2 = (int)(Math.random() * (4));
-                    System.out.println(rand2);
                     if(rand2==0){
                         StatusEffectInstance poison = new StatusEffectInstance(StatusEffects.POISON, 25*((level*4)), 0);
                         living.addStatusEffect(poison);

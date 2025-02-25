@@ -88,4 +88,6 @@ homing (arrows home in on thier target)
 omniscience (head, gives all creatures within a certain radius of you glowing)
 quick learner (head, gain more xp)
 toolswaping (atotool, chest)
+change the soulsharpness enchantment to not use nbt for the timer and directly increase attack damage
+change enchantments that have negitive aspects to be split into the positive aspect and the negitive aspect becomes a curse. 
 */
