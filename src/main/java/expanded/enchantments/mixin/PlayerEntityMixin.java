@@ -5,21 +5,20 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import com.llamalad7.mixinextras.sugar.Local;
 
 import expanded.enchantments.Registers;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity{
@@ -63,11 +62,11 @@ public abstract class PlayerEntityMixin extends LivingEntity{
         }
 
     }
-    @Inject(method = "onKilledOther", at = @At("HEAD"), locals = LocalCapture.CAPTURE_FAILHARD)
-    private void tick(ServerWorld world, LivingEntity other, CallbackInfo info) {
-        ItemStack chest = this.getEquippedStack(EquipmentSlot.CHEST);
+    @Inject(method = "onKilledOther", at = @At("HEAD"))
+    private void killedOther (@Local LivingEntity other, CallbackInfo info) {//WHY CRASH
+       ItemStack chest = this.getEquippedStack(EquipmentSlot.CHEST);
         double lifeStealLevel = EnchantmentHelper.getLevel(Registers.LIFESTEAL, chest);
-        if(lifeStealLevel >0){
+        if(lifeStealLevel > 0){
             double hp = other.getAttributeBaseValue(EntityAttributes.GENERIC_MAX_HEALTH);
             this.heal(((float)(hp*lifeStealLevel)/10));
         }
