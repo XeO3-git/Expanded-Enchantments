@@ -31,6 +31,7 @@ public class Registers {
 
     public static Enchantment NIGHTVISION = new NightVisionEnchantment();
     public static Enchantment LIFESTEAL = new LifeStealEnchantment();
+    public static Enchantment OMNISCIENCE  = new OmniscienceEnchantment();
 
     public static void Register(){
         Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "recoil"), RECOIL);
@@ -57,6 +58,7 @@ public class Registers {
 
         Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "nightvision"), NIGHTVISION);
         Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "lifesteal"), LIFESTEAL);
+        Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "omniscience"), OMNISCIENCE);
 
         
 
@@ -85,7 +87,6 @@ collosis slayer (deal more damage to bosses)
 decapitation (axe, has a chance to insta kill your enemy with chance varying based on enemy max hp)
 phantom arrows (arrows are unaffected by gravity)
 homing (arrows home in on thier target)
-omniscience (head, gives all creatures within a certain radius of you glowing)
 quick learner (head, gain more xp)
 toolswaping (atotool, chest)
 change the soulsharpness enchantment to not use nbt for the timer and directly increase attack damage

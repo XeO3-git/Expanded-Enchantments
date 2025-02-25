@@ -1,5 +1,6 @@
 package expanded.enchantments.mixin;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import expanded.enchantments.Registers;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -25,6 +27,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity{
@@ -40,8 +43,6 @@ public abstract class PlayerEntityMixin extends LivingEntity{
     private static double prevHp;
     private boolean nightvis;
     private int timeLeft = 0;
-    private UUID damId = UUID.randomUUID();
-    private static double prevDam; 
     @Inject(method = "tick", at = @At("HEAD"))
     private void tick(CallbackInfo info) {
         ItemStack feet = this.getEquippedStack(EquipmentSlot.FEET);
@@ -79,21 +80,30 @@ public abstract class PlayerEntityMixin extends LivingEntity{
 
         int soulSharpnessEnchant = EnchantmentHelper.getLevel(Registers.SOUL_SHARPNESS, mainHand);
         if(soulSharpnessEnchant > 0){
-           int souls = mainHand.getNbt().getInt("souls");
+           int souls = mainHand.getNbt().getInt("Amount");
            if(souls>0 && timeLeft !=0){
                 timeLeft -=1;
            }
            else{
             if(souls>0){
-                mainHand.getNbt().putInt("souls", souls-1);
+                mainHand.getNbt().putInt("Amount", souls-1);
                 timeLeft = 6000;
             }
            }
         }
-        else{
-           prevDam = this.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).getBaseValue();
-           System.out.println(prevDam);
+
+        int omniscienceEnchantment = EnchantmentHelper.getLevel(Registers.OMNISCIENCE, head);
+        if(omniscienceEnchantment>0){
+           List<Entity> near = this.getWorld().getOtherEntities(this, Box.of(this.getPos(), 128, 128, 128));
+           for (Entity in : near) {
+            if(in instanceof LivingEntity){
+                LivingEntity living = (LivingEntity)in;
+                StatusEffectInstance glow = new StatusEffectInstance(StatusEffects.GLOWING, 2, 1, true, false, false);
+                living.addStatusEffect(glow);
+            }
+           }
         }
+
     }
     @Inject(method = "onKilledOther", at = @At("HEAD"), locals = LocalCapture.CAPTURE_FAILHARD)
     public void onKilledOther(ServerWorld world, LivingEntity other, CallbackInfoReturnable<Boolean> info) {
@@ -104,35 +114,28 @@ public abstract class PlayerEntityMixin extends LivingEntity{
             this.heal(((float)(hp*lifeStealLevel)/10));
         }
         ItemStack mainHand = this.getEquippedStack(EquipmentSlot.MAINHAND);
-         int lv = EnchantmentHelper.getLevel(Registers.SOUL_SHARPNESS, mainHand);
-           if(lv != 0){
-                NbtCompound nbt = mainHand.getNbt();
-                if(nbt.contains("souls")){
-                    timeLeft = 6000;
-                    int souls= nbt.getInt("souls");
-                    if(souls<=20){
-                        nbt.putInt("souls", souls+1);
-                        mainHand.setNbt(nbt);
-                            this.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).removeModifier(damId);
-                            EntityAttributeModifier damMod = new EntityAttributeModifier(damId, "damMod", souls, Operation.ADDITION);
-                            this.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).addPersistentModifier(damMod);
-                    }
-                }
-                else{
-                    nbt.putInt("souls", 1);
+        int lv = EnchantmentHelper.getLevel(Registers.SOUL_SHARPNESS, mainHand);
+        if(lv != 0){
+            NbtCompound nbt = mainHand.getNbt();
+            if(nbt.contains("Amount") && nbt.contains("Name") && nbt.contains("Operation") && nbt.contains("UUID")){
+                timeLeft = 6000;
+                int souls= nbt.getInt("Amount");
+                if(souls<=20){
+                    mainHand.getAttributeModifiers(EquipmentSlot.MAINHAND).remove(EntityAttributes.GENERIC_ATTACK_DAMAGE, EntityAttributeModifier.fromNbt(nbt));//This doesnt seem to remove the attribute modifiers...
+                    nbt.putInt("Amount", souls+1);
                     mainHand.setNbt(nbt);
-                    timeLeft = 6000;
-                    if(this.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).getModifier(damId)==null){
-                            EntityAttributeModifier damMod = new EntityAttributeModifier(damId, "damMod", 1, Operation.ADDITION);
-                            this.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).addPersistentModifier(damMod);
-                        }
-                    else{
-                            this.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).removeModifier(damId);
-                            EntityAttributeModifier damMod = new EntityAttributeModifier(damId, "damMod", 1, Operation.ADDITION);
-                            this.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).addPersistentModifier(damMod);
-                    }
+                    mainHand.addAttributeModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE, EntityAttributeModifier.fromNbt(nbt), EquipmentSlot.MAINHAND);
                 }
-
-           }
+            }
+            else{
+                nbt.putInt("Amount", 1);
+                nbt.putInt("Operation", Operation.ADDITION.getId());
+                nbt.putString("Name", "SoulsDam");
+                nbt.putUuid("UUID", UUID.randomUUID());
+                mainHand.setNbt(nbt);
+                timeLeft = 6000;
+                mainHand.addAttributeModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE, EntityAttributeModifier.fromNbt(nbt), EquipmentSlot.MAINHAND);
+            }
+        }
     }
 }
