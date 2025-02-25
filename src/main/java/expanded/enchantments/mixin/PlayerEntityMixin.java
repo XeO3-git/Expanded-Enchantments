@@ -5,8 +5,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import com.llamalad7.mixinextras.sugar.Local;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import expanded.enchantments.Registers;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -19,6 +19,7 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity{
@@ -56,18 +57,19 @@ public abstract class PlayerEntityMixin extends LivingEntity{
             this.addStatusEffect(speed);
         }
          int darkvisionEnchantment = EnchantmentHelper.getLevel(Registers.NIGHTVISION, head);
-        if(darkvisionEnchantment>0){
-            StatusEffectInstance nightvis = new StatusEffectInstance(StatusEffects.NIGHT_VISION, 20, 1, true, false, false);
+        if(darkvisionEnchantment>0 && !this.hasStatusEffect(StatusEffects.NIGHT_VISION)){
+            StatusEffectInstance nightvis = new StatusEffectInstance(StatusEffects.NIGHT_VISION, 201, 1, true, false, false);
             this.addStatusEffect(nightvis);
         }
 
     }
-    @Inject(method = "onKilledOther", at = @At("HEAD"))
-    private void killedOther (@Local LivingEntity other, CallbackInfo info) {//WHY CRASH
-       ItemStack chest = this.getEquippedStack(EquipmentSlot.CHEST);
+    @Inject(method = "onKilledOther", at = @At("HEAD"), locals = LocalCapture.CAPTURE_FAILHARD)
+    public void onKilledOther(ServerWorld world, LivingEntity other, CallbackInfoReturnable info) {
+        ItemStack chest = this.getEquippedStack(EquipmentSlot.CHEST);
         double lifeStealLevel = EnchantmentHelper.getLevel(Registers.LIFESTEAL, chest);
         if(lifeStealLevel > 0){
             double hp = other.getAttributeBaseValue(EntityAttributes.GENERIC_MAX_HEALTH);
+            System.out.println((float)((hp*lifeStealLevel)/10));
             this.heal(((float)(hp*lifeStealLevel)/10));
         }
     }

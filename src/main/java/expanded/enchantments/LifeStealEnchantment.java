@@ -6,7 +6,7 @@ import net.minecraft.entity.EquipmentSlot;
 
 public class LifeStealEnchantment extends Enchantment{
     public LifeStealEnchantment(){
-            super(Enchantment.Rarity.RARE, EnchantmentTarget.WEAPON, new EquipmentSlot[] {EquipmentSlot.MAINHAND});
+            super(Enchantment.Rarity.RARE, EnchantmentTarget.ARMOR_CHEST, new EquipmentSlot[] {EquipmentSlot.CHEST});
     }
    @Override
 	public int getMinPower(int level) {
