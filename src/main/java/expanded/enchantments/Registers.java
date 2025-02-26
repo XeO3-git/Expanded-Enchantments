@@ -32,6 +32,7 @@ public class Registers {
     public static Enchantment NIGHTVISION = new NightVisionEnchantment();
     public static Enchantment LIFESTEAL = new LifeStealEnchantment();
     public static Enchantment OMNISCIENCE  = new OmniscienceEnchantment();
+    public static Enchantment STEPPING  = new SteppingEnchantment();
 
     public static void Register(){
         Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "recoil"), RECOIL);
@@ -59,6 +60,8 @@ public class Registers {
         Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "nightvision"), NIGHTVISION);
         Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "lifesteal"), LIFESTEAL);
         Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "omniscience"), OMNISCIENCE);
+        Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "stepping"), STEPPING);
+        
 
         
 
@@ -79,7 +82,6 @@ well nourished (hunger degrades slower, chest)
 intangable (legs, when taking damage has a chance to teleport you like chorus fruit and make you immune to all damage for one second)
 hardhat (take less damage when hitting blocks with an elytra, head)
 persisting (this item cannot be killed except by the void nor can it despawn)
-stepping (step up blocks like a horse, boots)
 multi-hook (adds multiple hooks from the fishing rod)
 zeus (has a small chance to summon a lightning bolt when your arrow hits an enemy)
 misanthropy (deal more damage to players, illagers, wiches, villagers, and endermen)
@@ -92,6 +94,4 @@ toolswaping (atotool, chest)
 sniper (more damage the farther you are from your target, bow)
 shotgun (much more damage close up, but less damage father away, crossbow)
 waterlord (trident, gives water breathing)
-
-change the soulsharpness enchantment to have the attribute modifiers work correctly
 */

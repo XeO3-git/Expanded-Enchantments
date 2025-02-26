@@ -46,7 +46,7 @@ public abstract class PlayerEntityMixin extends LivingEntity{
         ItemStack chest = this.getEquippedStack(EquipmentSlot.CHEST);
         ItemStack legs = this.getEquippedStack(EquipmentSlot.LEGS);
         ItemStack mainHand = this.getEquippedStack(EquipmentSlot.MAINHAND);
-
+        //healthBoost
         int healthBoostChest = EnchantmentHelper.getLevel(Registers.HEALTH_BOOST, chest);
         int healthBoostHead = EnchantmentHelper.getLevel(Registers.HEALTH_BOOST, head);
         int healthBoostLegs = EnchantmentHelper.getLevel(Registers.HEALTH_BOOST, legs);
@@ -57,13 +57,13 @@ public abstract class PlayerEntityMixin extends LivingEntity{
         else{
             prevHp = this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).getBaseValue();
         }
-        
+        //speed
         int speedEnchant = EnchantmentHelper.getLevel(Registers.SWIFT_FEET, feet);
         if(speedEnchant!=0){
             StatusEffectInstance speed = new StatusEffectInstance(StatusEffects.SPEED, 20, speedEnchant-1, true, false, false);
             this.addStatusEffect(speed);
         }
-
+        //darkvision
         int darkvisionEnchantment=EnchantmentHelper.getLevel(Registers.NIGHTVISION, head);
         if(darkvisionEnchantment>0){
             this.nightvis = true;
@@ -73,7 +73,7 @@ public abstract class PlayerEntityMixin extends LivingEntity{
         if(this.nightvis && darkvisionEnchantment==0){
             this.removeStatusEffect(StatusEffects.NIGHT_VISION);
         }
-
+        //omniscience
         int omniscienceEnchantment = EnchantmentHelper.getLevel(Registers.OMNISCIENCE, head);
         if(omniscienceEnchantment>0){
            List<Entity> near = this.getWorld().getOtherEntities(this, Box.of(this.getPos(), 64, 64, 64));
@@ -85,17 +85,23 @@ public abstract class PlayerEntityMixin extends LivingEntity{
             }
            }
         }
+        //stepping
+        int stepHeightEnchantment = EnchantmentHelper.getLevel(Registers.STEPPING, feet);
+        if(stepHeightEnchantment>0){
+            this.setStepHeight(stepHeightEnchantment);
+        }
 
     }
     @Inject(method = "onKilledOther", at = @At("HEAD"), locals = LocalCapture.CAPTURE_FAILHARD)
     public void onKilledOther(ServerWorld world, LivingEntity other, CallbackInfoReturnable<Boolean> info) {
+        //lifeSteal
         ItemStack chest = this.getEquippedStack(EquipmentSlot.CHEST);
         double lifeStealLevel = EnchantmentHelper.getLevel(Registers.LIFESTEAL, chest);
         if(lifeStealLevel > 0){
             double hp = other.getAttributeBaseValue(EntityAttributes.GENERIC_MAX_HEALTH);
             this.heal(((float)(hp*lifeStealLevel)/10));
         }
-
+        //soulSharpness
         ItemStack mainHand = this.getEquippedStack(EquipmentSlot.MAINHAND);
         int lv = EnchantmentHelper.getLevel(Registers.SOUL_SHARPNESS, mainHand);
         if(lv != 0){
