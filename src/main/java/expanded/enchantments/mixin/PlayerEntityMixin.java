@@ -1,7 +1,6 @@
 package expanded.enchantments.mixin;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -17,8 +16,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributeModifier.Operation;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -42,7 +39,6 @@ public abstract class PlayerEntityMixin extends LivingEntity{
     }
     private static double prevHp;
     private boolean nightvis;
-    private int timeLeft = 0;
     @Inject(method = "tick", at = @At("HEAD"))
     private void tick(CallbackInfo info) {
         ItemStack feet = this.getEquippedStack(EquipmentSlot.FEET);
@@ -78,23 +74,9 @@ public abstract class PlayerEntityMixin extends LivingEntity{
             this.removeStatusEffect(StatusEffects.NIGHT_VISION);
         }
 
-        int soulSharpnessEnchant = EnchantmentHelper.getLevel(Registers.SOUL_SHARPNESS, mainHand);
-        if(soulSharpnessEnchant > 0){
-           int souls = mainHand.getNbt().getInt("Amount");
-           if(souls>0 && timeLeft !=0){
-                timeLeft -=1;
-           }
-           else{
-            if(souls>0){
-                mainHand.getNbt().putInt("Amount", souls-1);
-                timeLeft = 6000;
-            }
-           }
-        }
-
         int omniscienceEnchantment = EnchantmentHelper.getLevel(Registers.OMNISCIENCE, head);
         if(omniscienceEnchantment>0){
-           List<Entity> near = this.getWorld().getOtherEntities(this, Box.of(this.getPos(), 128, 128, 128));
+           List<Entity> near = this.getWorld().getOtherEntities(this, Box.of(this.getPos(), 64, 64, 64));
            for (Entity in : near) {
             if(in instanceof LivingEntity){
                 LivingEntity living = (LivingEntity)in;
@@ -113,28 +95,21 @@ public abstract class PlayerEntityMixin extends LivingEntity{
             double hp = other.getAttributeBaseValue(EntityAttributes.GENERIC_MAX_HEALTH);
             this.heal(((float)(hp*lifeStealLevel)/10));
         }
+
         ItemStack mainHand = this.getEquippedStack(EquipmentSlot.MAINHAND);
         int lv = EnchantmentHelper.getLevel(Registers.SOUL_SHARPNESS, mainHand);
         if(lv != 0){
             NbtCompound nbt = mainHand.getNbt();
-            if(nbt.contains("Amount") && nbt.contains("Name") && nbt.contains("Operation") && nbt.contains("UUID")){
-                timeLeft = 6000;
-                int souls= nbt.getInt("Amount");
-                if(souls<=20){
-                    mainHand.getAttributeModifiers(EquipmentSlot.MAINHAND).remove(EntityAttributes.GENERIC_ATTACK_DAMAGE, EntityAttributeModifier.fromNbt(nbt));//This doesnt seem to remove the attribute modifiers...
-                    nbt.putInt("Amount", souls+1);
-                    mainHand.setNbt(nbt);
-                    mainHand.addAttributeModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE, EntityAttributeModifier.fromNbt(nbt), EquipmentSlot.MAINHAND);
+            if(nbt.contains("souls")){
+                int souls= nbt.getInt("souls");
+                if(souls<=11){
+                    nbt.putInt("souls", souls+1);
                 }
+                mainHand.setNbt(nbt);
             }
             else{
-                nbt.putInt("Amount", 1);
-                nbt.putInt("Operation", Operation.ADDITION.getId());
-                nbt.putString("Name", "SoulsDam");
-                nbt.putUuid("UUID", UUID.randomUUID());
+                nbt.putInt("souls", 1);
                 mainHand.setNbt(nbt);
-                timeLeft = 6000;
-                mainHand.addAttributeModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE, EntityAttributeModifier.fromNbt(nbt), EquipmentSlot.MAINHAND);
             }
         }
     }

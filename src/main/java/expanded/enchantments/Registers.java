@@ -89,6 +89,9 @@ phantom arrows (arrows are unaffected by gravity)
 homing (arrows home in on thier target)
 quick learner (head, gain more xp)
 toolswaping (atotool, chest)
-change the soulsharpness enchantment to not use nbt for the timer and directly increase attack damage
-change enchantments that have negitive aspects to be split into the positive aspect and the negitive aspect becomes a curse. 
+sniper (more damage the farther you are from your target, bow)
+shotgun (much more damage close up, but less damage father away, crossbow)
+waterlord (trident, gives water breathing)
+
+change the soulsharpness enchantment to have the attribute modifiers work correctly
 */
