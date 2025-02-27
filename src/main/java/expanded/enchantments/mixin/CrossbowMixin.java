@@ -44,6 +44,8 @@ public abstract class CrossbowMixin {
     @Inject(at = @At("HEAD"), method = "postShoot", locals = LocalCapture.CAPTURE_FAILHARD)
 	private static void recoil(World world, LivingEntity entity, ItemStack stack, CallbackInfo info) {
 		int lv = EnchantmentHelper.getLevel(Registers.RECOIL, stack);
-		entity.takeKnockback(lv+1, entity.getRotationVector().x, entity.getRotationVector().z);
+        if(lv>0){
+		    entity.takeKnockback(lv+1, entity.getRotationVector().x, entity.getRotationVector().z);
+        }
 	}
 }

@@ -93,3 +93,12 @@ helmet enchantment that grants nightvision
 ### Lifesteal
 
 Chestplate enchantment that causes you to regain a bit of health whenever you kill a mob
+
+### Omniscience 
+
+Helmet enchantment that gives all nearby mobs glowing
+
+### Stepping 
+
+Boots enchantment that allows you to step up blocks like a horse
+

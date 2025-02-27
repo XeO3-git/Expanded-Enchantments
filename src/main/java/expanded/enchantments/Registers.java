@@ -33,6 +33,8 @@ public class Registers {
     public static Enchantment LIFESTEAL = new LifeStealEnchantment();
     public static Enchantment OMNISCIENCE  = new OmniscienceEnchantment();
     public static Enchantment STEPPING  = new SteppingEnchantment();
+    public static Enchantment HEATSEEKING  = new HeatSeekingEnchantment();
+
 
     public static void Register(){
         Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "recoil"), RECOIL);
@@ -61,6 +63,7 @@ public class Registers {
         Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "lifesteal"), LIFESTEAL);
         Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "omniscience"), OMNISCIENCE);
         Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "stepping"), STEPPING);
+        Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "heatseeking"),    HEATSEEKING);
         
 
         

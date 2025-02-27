@@ -38,6 +38,7 @@ public abstract class PlayerEntityMixin extends LivingEntity{
         super(entityType, world);
     }
     private static double prevHp;
+    private boolean stepping;
     private boolean nightvis;
     @Inject(method = "tick", at = @At("HEAD"))
     private void tick(CallbackInfo info) {
@@ -86,9 +87,15 @@ public abstract class PlayerEntityMixin extends LivingEntity{
            }
         }
         //stepping
-        int stepHeightEnchantment = EnchantmentHelper.getLevel(Registers.STEPPING, feet);
+        int stepHeightEnchantment = EnchantmentHelper.getLevel(Registers.STEPPING, feet);//fix the bug where you will be able to continue to step up blocks after taking off boots
         if(stepHeightEnchantment>0){
             this.setStepHeight(stepHeightEnchantment);
+            stepping = true;
+        }
+        else{
+            if(stepping){
+                this.setStepHeight(0.6F);
+            }
         }
 
     }
