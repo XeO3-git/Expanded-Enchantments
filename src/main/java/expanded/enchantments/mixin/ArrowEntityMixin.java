@@ -73,7 +73,6 @@ public abstract class ArrowEntityMixin extends PersistentProjectileEntity{
     private boolean isTargerable(Entity entity){
         Vec3d directionTo = new Vec3d(entity.getX()-this.getX(), entity.getEyeY()-entity.getY(), entity.getZ()-this.getZ());
         double angle = Math.acos((directionTo.dotProduct(this.getVelocity())/(directionTo.length()*this.getVelocity().length())));
-        System.out.println(angle);
         if(entity instanceof LivingEntity && !(entity instanceof EndermanEntity) && angle<Math.PI/2){
             return true;
         }
