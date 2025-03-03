@@ -46,7 +46,6 @@ public abstract class PlayerEntityMixin extends LivingEntity{
         ItemStack head = this.getEquippedStack(EquipmentSlot.HEAD);
         ItemStack chest = this.getEquippedStack(EquipmentSlot.CHEST);
         ItemStack legs = this.getEquippedStack(EquipmentSlot.LEGS);
-        ItemStack mainHand = this.getEquippedStack(EquipmentSlot.MAINHAND);
         //healthBoost
         int healthBoostChest = EnchantmentHelper.getLevel(Registers.HEALTH_BOOST, chest);
         int healthBoostHead = EnchantmentHelper.getLevel(Registers.HEALTH_BOOST, head);

@@ -20,7 +20,6 @@ public abstract class ItemMixin {
     private static int timeLeft=6000;
     @Inject(at = @At("HEAD"), method = "inventoryTick", locals = LocalCapture.CAPTURE_FAILHARD)
 	private static void tick(ItemStack stack, World world, Entity entity, int slot, boolean selected, CallbackInfo info) {
-    System.out.println(timeLeft);
     int soulSharpnessEnchant = EnchantmentHelper.getLevel(Registers.SOUL_SHARPNESS, stack);
         if(soulSharpnessEnchant > 0){
            int souls = stack.getNbt().getInt("souls");

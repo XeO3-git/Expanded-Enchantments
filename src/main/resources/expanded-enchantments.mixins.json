@@ -6,7 +6,8 @@
 		"CrossbowMixin",
 		"PersistentProjectileEntityMixin",
 		"PlayerEntityMixin",
-		"ItemMixin"
+		"ItemMixin",
+		"ArrowEntityMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
