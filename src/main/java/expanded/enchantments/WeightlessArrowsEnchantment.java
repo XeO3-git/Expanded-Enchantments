@@ -32,4 +32,8 @@ public class WeightlessArrowsEnchantment extends Enchantment{
     public int getMaxLevel() {
         return 1;
     }
+    	@Override
+    protected boolean canAccept(Enchantment other) {
+        return super.canAccept(other) && other != Registers.HEATSEEKING;
+    }
 }

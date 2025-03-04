@@ -24,34 +24,84 @@ import net.minecraft.world.World;
 @Mixin(ArrowEntity.class)
 public abstract class ArrowEntityMixin extends PersistentProjectileEntity{
 
-        protected ArrowEntityMixin(EntityType<? extends ArrowEntity> entityType, World world) {
-            super(entityType, world);
+    protected ArrowEntityMixin(EntityType<? extends ArrowEntity> entityType, World world) {
+        super(entityType, world);
+    }
+    private LivingEntity target;
+    private int lvHeatSeeking;
+    private int lvWeightlessArrows;
+    private LivingEntity owner;
+    private Vec3d prevVeloc;
+    private boolean changed;
+    @Inject(method = "initFromStack", at = @At("TAIL"))
+    private void init(CallbackInfo info) {
+        if(this.getOwner() instanceof LivingEntity){
+            owner = (LivingEntity)this.getOwner();
+            lvHeatSeeking = EnchantmentHelper.getLevel(Registers.HEATSEEKING, owner.getMainHandStack());
+            lvWeightlessArrows = EnchantmentHelper.getLevel(Registers.WEIGHTLESS_ARROWS, owner.getMainHandStack());
+            Box box = Box.of(this.getPos(), 128,128, 128);
+            List<Entity> near = this.getWorld().getOtherEntities(owner, box);
+            double maxAngle = lvHeatSeeking==1 ? Math.PI/12 : lvHeatSeeking == 2 ? Math.PI/8 : Math.PI/4;  
+            target = getTarget(near, maxAngle/8, maxAngle, owner);//recursive function that returns the closest target within a small angle of the owner
         }
-        private LivingEntity target;
-        private int steps = 10;
-        private Vec3d toAdd;
-        private boolean changed = false;
-        @Inject(method = "tick", at = @At("TAIL"))
-        private void tick(CallbackInfo info) {
-        if(this.getOwner() instanceof LivingEntity && !this.inGround){
-            LivingEntity owner = (LivingEntity)this.getOwner();
-            int lvHeatSeeking = EnchantmentHelper.getLevel(Registers.HEATSEEKING, owner.getMainHandStack());
-            int lvWeightlessArrows = EnchantmentHelper.getLevel(Registers.WEIGHTLESS_ARROWS, owner.getMainHandStack());
-            if(lvHeatSeeking>0){
-                if(target == null){
-                    Box box = Box.of(this.getPos(), Math.pow(2, lvHeatSeeking)+2, Math.pow(2, lvHeatSeeking)+2, Math.pow(2, lvHeatSeeking)+2);
-                    List<Entity> near = this.getWorld().getOtherEntities(owner, box);
-                    List<LivingEntity> targetable = new ArrayList<>();
-                    for (Entity entity : near) {
-                        if(isTargerable(entity)){
-                            targetable.add((LivingEntity)entity);
-                        }
-                    }
-                    if(!targetable.isEmpty()){
-                        target = this.getWorld().getClosestEntity(targetable, TargetPredicate.DEFAULT, owner, this.getX(), this.getY(), this.getZ());   
-                    }
-                }
-                else if(!changed){
+    }
+    @Inject(method = "tick", at = @At("TAIL"))
+    private void tick(CallbackInfo info) {
+        if(!changed){
+            prevVeloc = this.getVelocity();
+        }
+        if(target != null && target.isAlive()){
+            Vec3d veloc = this.getVelocity();
+            Vec3d direction = new Vec3d(target.getX() - this.getX(),target.getEyeY() - this.getY(),target.getZ() - this.getZ()).normalize();
+            if(angleBetween(veloc, direction)>0.01){
+                double steps = lvHeatSeeking == 4 ? 1 : 30/((double)lvHeatSeeking);
+                double angle = angleBetween(veloc, direction)/steps;
+                Vec3d vNorm = veloc.normalize();
+                // Compute the rotation axis
+                Vec3d rotationAxis = vNorm.crossProduct(direction);
+                rotationAxis = rotationAxis.normalize();
+                // Compute each term of Rodrigues' formula.
+                Vec3d term1 = veloc.multiply(Math.cos(angle));  // v * cos(theta)
+                Vec3d term2 = rotationAxis.crossProduct(veloc).multiply(Math.sin(angle));  // (k x v) * sin(theta)
+                Vec3d term3 = rotationAxis.multiply(rotationAxis.dotProduct(veloc) * (1 - Math.cos(angle))); // k (k dot v) * (1 - cos(theta))
+                Vec3d nVeloc = term1.add(term2).add(term3);
+                nVeloc = (nVeloc.normalize()).multiply(prevVeloc.length());
+                changed = true;
+                this.setVelocity(nVeloc); 
+            }
+            this.setNoGravity(true);
+        }
+        if(lvWeightlessArrows>0 && lvHeatSeeking == 0){
+            this.setNoGravity(true);
+            this.setVelocity(prevVeloc);
+            changed = true;
+        }
+    }
+    private LivingEntity getTarget(List<Entity> near, double startAngle, double endAngle, LivingEntity owner){
+        List<LivingEntity> targetable = new ArrayList<>();
+        for (Entity entity : near) {
+            Vec3d direction = new Vec3d((entity.getX()-owner.getX()), (entity.getEyeY()-owner.getEyeY()), (entity.getZ()-owner.getZ()));
+            double angle = angleBetween(owner.getRotationVector(), direction);//angle between the owner and the entity
+            if(entity instanceof LivingEntity && !(entity instanceof EndermanEntity) && angle<startAngle && owner.canSee(entity)){
+                targetable.add((LivingEntity)entity);
+            }
+        }
+        if(!targetable.isEmpty()){
+            return this.getWorld().getClosestEntity(targetable, TargetPredicate.DEFAULT, owner, this.getX(), this.getY(), this.getZ());   
+        }
+        else if (startAngle != endAngle){
+           return getTarget(near, startAngle*2, endAngle, owner);
+        }
+        else{
+            return null;
+        }
+    }
+    private double angleBetween(Vec3d vec1, Vec3d vec2){
+        return Math.acos((vec1.dotProduct(vec2)/(vec1.length()*vec2.length())));
+    }
+}
+
+/*      else if(!changed){
                     Vec3d direction = new Vec3d((target.getX()-this.getX()), (target.getEyeY()-this.getY()), (target.getZ()-this.getZ()));
                     double length = this.getVelocity().length();
                     Vec3d nVeloc = direction.normalize().multiply(length);
@@ -63,21 +113,4 @@ public abstract class ArrowEntityMixin extends PersistentProjectileEntity{
                 }
                 else if(changed && toAdd != toAdd.multiply(steps) && this.getVelocity().length()<=toAdd.multiply(steps).length()){
                     this.addVelocity(toAdd);   
-                }
-            }
-            if(lvWeightlessArrows>0 && !this.hasNoGravity()){
-                this.setNoGravity(true);
-            }
-        }
-    }
-    private boolean isTargerable(Entity entity){
-        Vec3d directionTo = new Vec3d(entity.getX()-this.getX(), entity.getEyeY()-entity.getY(), entity.getZ()-this.getZ());
-        double angle = Math.acos((directionTo.dotProduct(this.getVelocity())/(directionTo.length()*this.getVelocity().length())));
-        if(entity instanceof LivingEntity && !(entity instanceof EndermanEntity) && angle<Math.PI/2){
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
-}
+                } */
