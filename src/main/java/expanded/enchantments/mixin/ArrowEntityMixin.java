@@ -54,7 +54,7 @@ public abstract class ArrowEntityMixin extends PersistentProjectileEntity{
             Vec3d veloc = this.getVelocity();
             Vec3d direction = new Vec3d(target.getX() - this.getX(),target.getEyeY() - this.getY(),target.getZ() - this.getZ()).normalize();
             if(angleBetween(veloc, direction)>0.01){
-                double steps = lvHeatSeeking == 4 ? 1 : 30/((double)lvHeatSeeking);
+                double steps = lvHeatSeeking == 4 ? 1 : 9/((double)lvHeatSeeking);
                 double angle = angleBetween(veloc, direction)/steps;
                 Vec3d vNorm = veloc.normalize();
                 // Compute the rotation axis
