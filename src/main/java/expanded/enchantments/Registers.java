@@ -35,6 +35,8 @@ public class Registers {
     public static Enchantment STEPPING  = new SteppingEnchantment();
     public static Enchantment HEATSEEKING  = new HeatSeekingEnchantment();
     public static Enchantment WEIGHTLESS_ARROWS  = new WeightlessArrowsEnchantment();
+    public static Enchantment THUNDER_GOD  = new ThunderGodEnchantment();
+    public static Enchantment TURTLE  = new TurtleEnchantment();
 
 
     public static void Register(){
@@ -59,13 +61,16 @@ public class Registers {
         Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "exploding_arrows"), EXPLODING_ARROWS);
         Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "health_boost"), HEALTH_BOOST);
         Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "swift_feet"), SWIFT_FEET);
-
         Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "nightvision"), NIGHTVISION);
         Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "lifesteal"), LIFESTEAL);
         Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "omniscience"), OMNISCIENCE);
         Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "stepping"), STEPPING);
         Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "heatseeking"),    HEATSEEKING);
         Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "weightless_arrows"),    WEIGHTLESS_ARROWS);
+        Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "thunder_god"), THUNDER_GOD);
+        Registry.register(Registries.ENCHANTMENT, new Identifier("expanded-enchantments", "turtle"), TURTLE);
+        
+        
         
 
         
@@ -80,7 +85,6 @@ Gleaming (gives a chance to drop xp from blocks broken)
 Nether's bane (deals more damage to nether mobs)
 End's bane (deals more damage to end mobs) 
 harvesting (fortune for hoes)
-turtle (gives resistance and slowness when you bring up your shield)
 breserker (deal more damage the lower your health is, chest)
 unscathed (deal more damage when at full health, but less at lower health, chest)
 well nourished (hunger degrades slower, chest)
@@ -88,15 +92,14 @@ intangable (legs, when taking damage has a chance to teleport you like chorus fr
 hardhat (take less damage when hitting blocks with an elytra, head)
 persisting (this item cannot be killed except by the void nor can it despawn)
 multi-hook (adds multiple hooks from the fishing rod)
-zeus (has a small chance to summon a lightning bolt when your arrow hits an enemy)
 misanthropy (deal more damage to players, illagers, wiches, villagers, and endermen)
 collosis slayer (deal more damage to bosses)
 decapitation (axe, has a chance to insta kill your enemy with chance varying based on enemy max hp)
-phantom arrows (arrows are unaffected by gravity)
-homing (arrows home in on thier target)
 quick learner (head, gain more xp)
 toolswaping (atotool, chest)
 sniper (more damage the farther you are from your target, bow)
 shotgun (much more damage close up, but less damage father away, crossbow)
 waterlord (trident, gives water breathing)
+stasis (leggings, when you are below a certain health, has a chance to stop/slow time around you for a few seconds damages the leggings greatly)
+slowing (shield, when the shield is raised time slows down a bit. damges the shield when this happens)
 */

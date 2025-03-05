@@ -46,6 +46,8 @@ public abstract class PlayerEntityMixin extends LivingEntity{
         ItemStack head = this.getEquippedStack(EquipmentSlot.HEAD);
         ItemStack chest = this.getEquippedStack(EquipmentSlot.CHEST);
         ItemStack legs = this.getEquippedStack(EquipmentSlot.LEGS);
+        ItemStack mainHand = this.getEquippedStack(EquipmentSlot.MAINHAND);
+        ItemStack offHand = this.getEquippedStack(EquipmentSlot.OFFHAND);
         //healthBoost
         int healthBoostChest = EnchantmentHelper.getLevel(Registers.HEALTH_BOOST, chest);
         int healthBoostHead = EnchantmentHelper.getLevel(Registers.HEALTH_BOOST, head);
@@ -86,7 +88,7 @@ public abstract class PlayerEntityMixin extends LivingEntity{
            }
         }
         //stepping
-        int stepHeightEnchantment = EnchantmentHelper.getLevel(Registers.STEPPING, feet);//fix the bug where you will be able to continue to step up blocks after taking off boots
+        int stepHeightEnchantment = EnchantmentHelper.getLevel(Registers.STEPPING, feet);
         if(stepHeightEnchantment>0){
             this.setStepHeight(stepHeightEnchantment);
             stepping = true;
@@ -96,7 +98,14 @@ public abstract class PlayerEntityMixin extends LivingEntity{
                 this.setStepHeight(0.6F);
             }
         }
-
+        //turtle
+        int turtleEnchantment = EnchantmentHelper.getLevel(Registers.TURTLE, offHand) + EnchantmentHelper.getLevel(Registers.TURTLE, mainHand);
+        if(turtleEnchantment>0 && this.isBlocking()){
+            StatusEffectInstance res = new StatusEffectInstance(StatusEffects.RESISTANCE, 3, turtleEnchantment+1, true, false, false);
+            StatusEffectInstance slow = new StatusEffectInstance(StatusEffects.SLOWNESS, 3, turtleEnchantment*4, true, false, false);
+            this.addStatusEffect(slow);
+            this.addStatusEffect(res);
+        }
     }
     @Inject(method = "onKilledOther", at = @At("HEAD"), locals = LocalCapture.CAPTURE_FAILHARD)
     public void onKilledOther(ServerWorld world, LivingEntity other, CallbackInfoReturnable<Boolean> info) {

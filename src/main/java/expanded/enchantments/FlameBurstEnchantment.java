@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.joml.Math;
 
+import expanded.enchantments.util.ParticleShapes;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentTarget;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 
@@ -31,10 +33,12 @@ public class FlameBurstEnchantment extends Enchantment{
     }
     @Override
     public void onTargetDamaged(LivingEntity user, Entity target, int level) {
-         int rand = (int)(Math.random() * (10/level)-1);
+         int rand = (int)(Math.random() * ((10/level)-1));
+         System.out.println(rand);
          if(rand == 0){
             World world = user.getWorld();
             List<Entity> entities = world.getOtherEntities(user, Box.of(user.getPos(), 15, 15, 15));
+            ParticleShapes.burstShape(world, ParticleTypes.FLAME, 150, user.getPos(), 0.7);
             for (Entity hit : entities) {
                 if(hit instanceof LivingEntity){
                    hit.setFireTicks(20*((level*4)-1));

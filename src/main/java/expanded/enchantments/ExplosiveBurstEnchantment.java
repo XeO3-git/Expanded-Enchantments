@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.joml.Math;
 
+import expanded.enchantments.util.ParticleShapes;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentTarget;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 
@@ -34,6 +36,7 @@ public class ExplosiveBurstEnchantment extends Enchantment{
          int rand = (int)(Math.random() * (10/level)-1);
          if(rand == 0){
             World world = user.getWorld();
+            ParticleShapes.burstShape(world, ParticleTypes.CRIT, 150, user.getPos(), 0.7);
             List<Entity> entities = world.getOtherEntities(user, Box.of(user.getPos(), 15, 15, 15));
             for (Entity hit : entities) {
                 double x=hit.getPos().x-user.getPos().x;
