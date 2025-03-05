@@ -102,3 +102,11 @@ Helmet enchantment that gives all nearby mobs glowing
 
 Boots enchantment that allows you to step up blocks like a horse
 
+### Heatseeking
+
+bow/crossbow enchantment that makes arrows home in on targets
+
+### Weightless Arrows
+
+bow/crossbow enchantment that makes your arrows have no gravity
+ 

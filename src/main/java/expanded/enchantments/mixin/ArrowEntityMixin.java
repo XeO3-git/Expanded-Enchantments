@@ -38,11 +38,13 @@ public abstract class ArrowEntityMixin extends PersistentProjectileEntity{
         if(this.getOwner() instanceof LivingEntity){
             owner = (LivingEntity)this.getOwner();
             lvHeatSeeking = EnchantmentHelper.getLevel(Registers.HEATSEEKING, owner.getMainHandStack());
-            lvWeightlessArrows = EnchantmentHelper.getLevel(Registers.WEIGHTLESS_ARROWS, owner.getMainHandStack());
-            Box box = Box.of(this.getPos(), 128,128, 128);
-            List<Entity> near = this.getWorld().getOtherEntities(owner, box);
-            double maxAngle = lvHeatSeeking==1 ? Math.PI/12 : lvHeatSeeking == 2 ? Math.PI/8 : Math.PI/4;  
-            target = getTarget(near, maxAngle/8, maxAngle, owner);//recursive function that returns the closest target within a small angle of the owner
+            lvWeightlessArrows = EnchantmentHelper.getLevel(Registers.WEIGHTLESS_ARROWS, owner.getMainHandStack());  
+            if(lvHeatSeeking > 0){ 
+                Box box = Box.of(this.getPos(), 128,128, 128);
+                List<Entity> near = this.getWorld().getOtherEntities(owner, box);
+                double maxAngle = lvHeatSeeking==1 ? Math.PI/12 : lvHeatSeeking == 2 ? Math.PI/8 : Math.PI/4;  
+                target = getTarget(near, maxAngle/8, maxAngle, owner);//recursive function that returns the closest target within a small angle of the owner
+            }
         }
     }
     @Inject(method = "tick", at = @At("TAIL"))
@@ -100,17 +102,3 @@ public abstract class ArrowEntityMixin extends PersistentProjectileEntity{
         return Math.acos((vec1.dotProduct(vec2)/(vec1.length()*vec2.length())));
     }
 }
-
-/*      else if(!changed){
-                    Vec3d direction = new Vec3d((target.getX()-this.getX()), (target.getEyeY()-this.getY()), (target.getZ()-this.getZ()));
-                    double length = this.getVelocity().length();
-                    Vec3d nVeloc = direction.normalize().multiply(length);
-                    this.setVelocity(nVeloc);
-                    this.setNoGravity(true);
-                    toAdd = new Vec3d(nVeloc.x/steps, nVeloc.y/steps, nVeloc.z/steps);
-                    this.setVelocity(toAdd);
-                    changed = true;
-                }
-                else if(changed && toAdd != toAdd.multiply(steps) && this.getVelocity().length()<=toAdd.multiply(steps).length()){
-                    this.addVelocity(toAdd);   
-                } */
